@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  MENTOR
+  ORGANIZATION
+  ADMIN
+}
+
+enum OpportunityStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role
+  createdAt DateTime @default(now())
+
+  opportunities  Opportunity[]       @relation("OrgOpportunities")
+  studentRequests MentorshipRequest[] @relation("StudentRequests")
+  mentorRequests  MentorshipRequest[] @relation("MentorRequests")
+}
+
+model Opportunity {
+  id          String            @id @default(cuid())
+  title       String
+  description String
+  deadline    DateTime
+  status      OpportunityStatus @default(PENDING)
+  createdAt   DateTime          @default(now())
+
+  orgId        String
+  organization User @relation("OrgOpportunities", fields: [orgId], references: [id])
+}
+
+model MentorshipRequest {
+  id        String        @id @default(cuid())
+  status    RequestStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+
+  studentId String
+  mentorId  String
+  student   User @relation("StudentRequests", fields: [studentId], references: [id])
+  mentor    User @relation("MentorRequests", fields: [mentorId], references: [id])
+
+  essays Essay[]
+}
+
+model Essay {
+  id        String   @id @default(cuid())
+  content   String
+  feedback  String?
+  createdAt DateTime @default(now())
+
+  requestId String
+  request   MentorshipRequest @relation(fields: [requestId], references: [id])
+}

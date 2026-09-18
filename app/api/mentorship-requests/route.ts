@@ -48,12 +48,12 @@ export async function GET() {
   }
 
   // Students see their own sent requests; mentors see requests sent to them
-  if (session.user.role === "STUDENT") {
+if (session.user.role === "STUDENT") {
   const requests = await prisma.mentorshipRequest.findMany({
     where: { studentId: session.user.id },
     include: {
       mentor: { select: { name: true } },
-      essays: true,
+      essays: { include: { opportunity: { select: { title: true } } } },
     },
     orderBy: { createdAt: "desc" },
   });

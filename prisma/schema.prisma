@@ -48,7 +48,8 @@ model Opportunity {
   createdAt   DateTime          @default(now())
 
   orgId        String
-  organization User @relation("OrgOpportunities", fields: [orgId], references: [id])
+  organization User    @relation("OrgOpportunities", fields: [orgId], references: [id])
+  essays       Essay[]
 }
 
 model MentorshipRequest {
@@ -72,4 +73,7 @@ model Essay {
 
   requestId String
   request   MentorshipRequest @relation(fields: [requestId], references: [id])
+
+  opportunityId String
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id])
 }

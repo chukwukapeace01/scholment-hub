@@ -7,6 +7,7 @@ type Essay = {
   content: string;
   feedback: string | null;
   request: { student: { name: string } };
+  opportunity: { title: string };
 };
 
 export default function EssaysReviewPage() {
@@ -62,9 +63,12 @@ export default function EssaysReviewPage() {
         <div className="space-y-6">
           {essays.map((essay) => (
             <div key={essay.id} className="rounded-lg bg-white p-6 shadow">
-              <h2 className="font-semibold text-gray-900">
-                From: {essay.request.student.name}
-              </h2>
+                <h2 className="font-semibold text-gray-900">
+                    From: {essay.request.student.name}
+                </h2>
+                <p className="text-xs font-medium text-orange-700">
+                    For: {essay.opportunity.title}
+                </p>
               <p className="mt-2 rounded bg-gray-50 p-3 text-sm text-gray-700">
                 {essay.content}
               </p>

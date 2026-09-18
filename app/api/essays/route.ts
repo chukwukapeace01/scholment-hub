@@ -10,11 +10,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Not authorized." }, { status: 403 });
   }
 
-  const { requestId, content } = await req.json();
+  const { requestId, opportunityId, content } = await req.json();
 
-  if (!requestId || !content) {
+  if (!requestId || !opportunityId || !content) {
     return NextResponse.json(
-      { error: "Request and essay content are required." },
+      { error: "Request, opportunity, and essay content are required." },
       { status: 400 }
     );
   }
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
   }
 
   const essay = await prisma.essay.create({
-    data: { requestId, content },
+    data: { requestId, opportunityId, content },
   });
 
   return NextResponse.json(
@@ -54,7 +54,10 @@ export async function GET() {
   if (session.user.role === "STUDENT") {
     const essays = await prisma.essay.findMany({
       where: { request: { studentId: session.user.id } },
-      include: { request: { include: { mentor: { select: { name: true } } } } },
+      include: {
+        request: { include: { mentor: { select: { name: true } } } },
+        opportunity: { select: { title: true } },
+      },
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json({ essays });
@@ -63,7 +66,10 @@ export async function GET() {
   if (session.user.role === "MENTOR") {
     const essays = await prisma.essay.findMany({
       where: { request: { mentorId: session.user.id } },
-      include: { request: { include: { student: { select: { name: true } } } } },
+      include: {
+        request: { include: { student: { select: { name: true } } } },
+        opportunity: { select: { title: true } },
+      },
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json({ essays });

@@ -28,9 +28,13 @@ export default function LoginPage() {
     setLoading(false);
 
     if (res?.error) {
-      setError("Invalid email or password.");
-      return;
-    }
+  if (res.error === "This account has been deactivated. Contact an administrator.") {
+    setError(res.error);
+  } else {
+    setError("Invalid email or password.");
+  }
+  return;
+}
 
     router.push("/dashboard");
   }

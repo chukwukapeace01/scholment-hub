@@ -47,7 +47,8 @@ export default function Navbar() {
       { href: "/opportunities/new", label: "Submit Opportunity" },
     ],
     ADMIN: [
-      { href: "/admin/opportunities", label: "Pending Opportunities" },
+      { href: "/admin/opportunities", label: "Manage Opportunities" },
+      { href: "/admin/users", label: "Manage Users" },
     ],
   };
 

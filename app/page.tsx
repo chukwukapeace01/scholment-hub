@@ -8,7 +8,7 @@ export default function HomePage() {
         <span className="text-orange-600">Made Simple</span>
       </h1>
       <p className="mt-6 max-w-xl text-lg text-gray-600">
-        ScholMent Hub connects young Africans, especially women, with
+        ScholMent Hub connects young Africans with
         verified scholarships, dedicated mentors, and the support needed to
         turn opportunities into success.
       </p>

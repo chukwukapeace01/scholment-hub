@@ -32,11 +32,12 @@ model User {
   password  String
   name      String
   role      Role
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
-  opportunities  Opportunity[]       @relation("OrgOpportunities")
-  studentRequests MentorshipRequest[] @relation("StudentRequests")
-  mentorRequests  MentorshipRequest[] @relation("MentorRequests")
+  opportunities   Opportunity[]        @relation("OrgOpportunities")
+  studentRequests MentorshipRequest[]  @relation("StudentRequests")
+  mentorRequests  MentorshipRequest[]  @relation("MentorRequests")
 }
 
 model Opportunity {

@@ -18,34 +18,38 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email and password are required.");
-        }
+  if (!credentials?.email || !credentials?.password) {
+    throw new Error("Email and password are required.");
+  }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+  const user = await prisma.user.findUnique({
+    where: { email: credentials.email },
+  });
 
-        if (!user) {
-          throw new Error("No user found with this email.");
-        }
+  if (!user) {
+    throw new Error("No user found with this email.");
+  }
 
-        const isValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
+  if (!user.isActive) {
+    throw new Error("This account has been deactivated. Contact an administrator.");
+  }
 
-        if (!isValid) {
-          throw new Error("Incorrect password.");
-        }
+  const isValid = await bcrypt.compare(
+    credentials.password,
+    user.password
+  );
 
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        };
-      },
+  if (!isValid) {
+    throw new Error("Incorrect password.");
+  }
+
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  };
+},
     }),
   ],
   callbacks: {

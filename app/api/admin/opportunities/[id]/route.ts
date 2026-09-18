@@ -26,3 +26,20 @@ export async function PATCH(
 
   return NextResponse.json({ message: "Opportunity updated.", opportunity });
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || session.user.role !== "ADMIN") {
+    return NextResponse.json({ error: "Not authorized." }, { status: 403 });
+  }
+
+  await prisma.opportunity.delete({
+    where: { id: params.id },
+  });
+
+  return NextResponse.json({ message: "Opportunity withdrawn." });
+}

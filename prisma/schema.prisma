@@ -38,6 +38,7 @@ model User {
   opportunities   Opportunity[]        @relation("OrgOpportunities")
   studentRequests MentorshipRequest[]  @relation("StudentRequests")
   mentorRequests  MentorshipRequest[]  @relation("MentorRequests")
+  applications    Application[]
 }
 
 model Opportunity {
@@ -51,6 +52,7 @@ model Opportunity {
   orgId        String
   organization User    @relation("OrgOpportunities", fields: [orgId], references: [id])
   essays       Essay[]
+  applications Application[]
 }
 
 model MentorshipRequest {
@@ -77,4 +79,27 @@ model Essay {
 
   opportunityId String
   opportunity   Opportunity @relation(fields: [opportunityId], references: [id])
+}
+
+enum ApplicationStatus {
+  APPLIED
+  INTERVIEW_SCHEDULED
+  ACCEPTED
+  REJECTED
+}
+
+model Application {
+  id        String            @id @default(cuid())
+  status    ApplicationStatus @default(APPLIED)
+  notes     String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  studentId     String
+  opportunityId String
+
+  student     User        @relation(fields: [studentId], references: [id])
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id])
+
+  @@unique([studentId, opportunityId])
 }

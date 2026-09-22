@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 type Opportunity = {
   id: string;
@@ -11,11 +12,21 @@ type Opportunity = {
   organization: { name: string };
 };
 
+const statusOptions = [
+  { value: "APPLIED", label: "Applied" },
+  { value: "INTERVIEW_SCHEDULED", label: "Interview Scheduled" },
+  { value: "ACCEPTED", label: "Accepted" },
+  { value: "REJECTED", label: "Rejected" },
+];
+
 export default function OpportunityDetailPage() {
   const params = useParams();
+  const { data: session } = useSession();
   const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("APPLIED");
 
   useEffect(() => {
     async function fetchOpportunity() {
@@ -34,6 +45,18 @@ export default function OpportunityDetailPage() {
 
     fetchOpportunity();
   }, [params.id]);
+
+  async function handleTrack() {
+    const res = await fetch("/api/applications", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ opportunityId: params.id, status }),
+    });
+
+    setMessage(
+      res.ok ? "Application tracked!" : "Something went wrong."
+    );
+  }
 
   if (loading) return <div className="p-8 text-gray-600">Loading...</div>;
   if (error) return <div className="p-8 text-red-600">{error}</div>;
@@ -54,6 +77,40 @@ export default function OpportunityDetailPage() {
         <p className="mt-4 text-sm font-medium text-gray-600">
           Deadline: {new Date(opportunity.deadline).toLocaleDateString()}
         </p>
+
+        {session?.user.role === "STUDENT" && (
+          <div className="mt-6 border-t pt-6">
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Track your application status
+            </label>
+            <p className="mb-2 text-xs text-gray-500">
+              ScholMent Hub doesn&apos;t submit applications for you — apply
+              directly with the provider, then track your progress here.
+            </p>
+            <div className="flex gap-2">
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="rounded border border-gray-300 px-3 py-2 text-sm"
+              >
+                {statusOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={handleTrack}
+                className="rounded bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700"
+              >
+                Save Status
+              </button>
+            </div>
+            {message && (
+              <p className="mt-2 text-sm text-green-700">{message}</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

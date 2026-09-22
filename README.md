@@ -58,9 +58,12 @@ npm install --legacy-peer-deps
 ### 5. Create your environment variables
 
 In the project root, create a file named `.env` and add:
+
+```
 DATABASE_URL="your-neon-connection-string-here"
 NEXTAUTH_SECRET="any-random-string-here"
 NEXTAUTH_URL="http://localhost:3000"
+```
 
 To generate a random secret, run:
 
@@ -89,19 +92,21 @@ Register a new account and pick any role (Student, Mentor, Organization, or Admi
 
 ## Project Structure
 
+```
 app/
-api/ → backend routes (auth, opportunities, mentorship, essays, admin)
-admin/ → admin-only pages
-opportunities/ → opportunity listing, detail, and submission pages
-mentors/ → mentor browsing and requests
-my-mentorships/ → student's essay submission and feedback view
-essays/ → mentor's essay review page
-dashboard/ → role-based landing page after login
+  api/            → backend routes (auth, opportunities, mentorship, essays, admin)
+  admin/          → admin-only pages
+  opportunities/  → opportunity listing, detail, and submission pages
+  mentors/        → mentor browsing and requests
+  my-mentorships/ → student's essay submission and feedback view
+  essays/         → mentor's essay review page
+  dashboard/      → role-based landing page after login
 lib/
-auth.ts → NextAuth configuration
-prisma.ts → Prisma client instance
+  auth.ts         → NextAuth configuration
+  prisma.ts       → Prisma client instance
 prisma/
-schema.prisma → database models
+  schema.prisma   → database models
+```
 
 ## Author
 

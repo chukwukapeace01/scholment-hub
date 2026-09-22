@@ -18,11 +18,11 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { title, description, deadline } = await req.json();
+    const { title, description, deadline, category, country } = await req.json();
 
-    if (!title || !description || !deadline) {
+    if (!title || !description || !deadline || !category || !country) {
       return NextResponse.json(
-        { error: "Title, description, and deadline are required." },
+        { error: "All fields are required." },
         { status: 400 }
       );
     }
@@ -32,6 +32,8 @@ export async function POST(req: Request) {
         title,
         description,
         deadline: new Date(deadline),
+        category,
+        country,
         orgId: session.user.id,
       },
     });
@@ -49,14 +51,17 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
   }
 
-  // Organizations see only their own opportunities
+  const { searchParams } = new URL(req.url);
+  const category = searchParams.get("category");
+  const country = searchParams.get("country");
+
   if (session.user.role === "ORGANIZATION") {
     const opportunities = await prisma.opportunity.findMany({
       where: { orgId: session.user.id },
@@ -65,10 +70,13 @@ export async function GET() {
     return NextResponse.json({ opportunities });
   }
 
-  // Students and others see only approved opportunities
-  const opportunities = await prisma.opportunity.findMany({
-    where: { status: "APPROVED" },
-    orderBy: { createdAt: "desc" },
-  });
+const opportunities = await prisma.opportunity.findMany({
+  where: {
+    status: "APPROVED",
+    ...(category ? { category } : {}),
+    ...(country ? { country: { contains: country, mode: "insensitive" } } : {}),
+  },
+  orderBy: { deadline: "asc" },
+});
   return NextResponse.json({ opportunities });
 }

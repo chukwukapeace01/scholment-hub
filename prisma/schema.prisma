@@ -46,11 +46,13 @@ model Opportunity {
   title       String
   description String
   deadline    DateTime
+  category    String?
+  country     String?
   status      OpportunityStatus @default(PENDING)
   createdAt   DateTime          @default(now())
 
   orgId        String
-  organization User    @relation("OrgOpportunities", fields: [orgId], references: [id])
+  organization User          @relation("OrgOpportunities", fields: [orgId], references: [id])
   essays       Essay[]
   applications Application[]
 }

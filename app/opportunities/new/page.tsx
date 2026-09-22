@@ -3,19 +3,29 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+const categories = [
+  "Scholarship",
+  "Internship",
+  "Fellowship",
+  "Grant",
+  "Exchange Programme",
+];
+
 export default function NewOpportunityPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     deadline: "",
+    category: "Scholarship",
+    country: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
@@ -76,6 +86,41 @@ export default function NewOpportunityPage() {
               onChange={handleChange}
               className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none"
             />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Category
+              </label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none"
+              >
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Country
+              </label>
+              <input
+                type="text"
+                name="country"
+                required
+                placeholder="e.g. Nigeria, Ghana, Kenya"
+                value={formData.country}
+                onChange={handleChange}
+                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none"
+              />
+            </div>
           </div>
 
           <div>

@@ -39,6 +39,7 @@ export default function Navbar() {
       { href: "/mentors", label: "Find a Mentor" },
       { href: "/my-mentorships", label: "My Mentorships" },
       { href: "/applications", label: "My Applications" },
+      { href: "/learning-resources", label: "Resources" },
     ],
     MENTOR: [
       { href: "/mentorship-requests", label: "Requests" },
@@ -50,6 +51,7 @@ export default function Navbar() {
     ADMIN: [
       { href: "/admin/opportunities", label: "Manage Opportunities" },
       { href: "/admin/users", label: "Manage Users" },
+      { href: "/admin/learning-resources", label: "Manage Resources" },
     ],
   };
 

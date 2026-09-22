@@ -105,3 +105,11 @@ model Application {
 
   @@unique([studentId, opportunityId])
 }
+
+model LearningResource {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  link        String
+  createdAt   DateTime @default(now())
+}

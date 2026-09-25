@@ -48,6 +48,7 @@ export default function Navbar() {
     ],
     ORGANIZATION: [
       { href: "/opportunities/new", label: "Submit Opportunity" },
+      { href: "/my-opportunities", label: "My Opportunities" },
     ],
     ADMIN: [
       { href: "/admin/opportunities", label: "Manage Opportunities" },

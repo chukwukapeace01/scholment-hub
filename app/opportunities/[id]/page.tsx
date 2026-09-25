@@ -27,6 +27,7 @@ export default function OpportunityDetailPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("APPLIED");
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     async function fetchOpportunity() {
@@ -43,8 +44,21 @@ export default function OpportunityDetailPage() {
       setLoading(false);
     }
 
+    async function checkSaved() {
+      const res = await fetch("/api/saved-opportunities");
+      if (!res.ok) return;
+      const data = await res.json();
+      const alreadySaved = data.saved.some(
+        (s: { opportunity: { id: string } }) => s.opportunity.id === params.id
+      );
+      setIsSaved(alreadySaved);
+    }
+
     fetchOpportunity();
-  }, [params.id]);
+    if (session?.user.role === "STUDENT") {
+      checkSaved();
+    }
+  }, [params.id, session]);
 
   async function handleTrack() {
     const res = await fetch("/api/applications", {
@@ -53,9 +67,20 @@ export default function OpportunityDetailPage() {
       body: JSON.stringify({ opportunityId: params.id, status }),
     });
 
-    setMessage(
-      res.ok ? "Application tracked!" : "Something went wrong."
-    );
+    setMessage(res.ok ? "Application tracked!" : "Something went wrong.");
+  }
+
+  async function handleToggleSave() {
+    const res = await fetch("/api/saved-opportunities", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ opportunityId: params.id }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      setIsSaved(data.saved);
+    }
   }
 
   if (loading) return <div className="p-8 text-gray-600">Loading...</div>;
@@ -65,9 +90,23 @@ export default function OpportunityDetailPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="mx-auto max-w-2xl rounded-lg bg-white p-8 shadow">
-        <h1 className="text-2xl font-bold text-gray-900">
-          {opportunity.title}
-        </h1>
+        <div className="flex items-start justify-between">
+          <h1 className="text-2xl font-bold text-gray-900">
+            {opportunity.title}
+          </h1>
+          {session?.user.role === "STUDENT" && (
+            <button
+              onClick={handleToggleSave}
+              className={`rounded border px-3 py-1.5 text-sm font-medium ${
+                isSaved
+                  ? "border-orange-600 bg-orange-50 text-orange-700"
+                  : "border-gray-300 text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              {isSaved ? "★ Saved" : "☆ Save"}
+            </button>
+          )}
+        </div>
         <p className="mt-1 text-sm text-gray-500">
           Posted by {opportunity.organization.name}
         </p>

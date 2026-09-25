@@ -39,6 +39,7 @@ export default function Navbar() {
       { href: "/mentors", label: "Find a Mentor" },
       { href: "/my-mentorships", label: "My Mentorships" },
       { href: "/applications", label: "My Applications" },
+      { href: "/saved-opportunities", label: "Saved" },
       { href: "/learning-resources", label: "Resources" },
     ],
     MENTOR: [
